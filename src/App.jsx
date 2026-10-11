@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { site, phone, whatsapp, links } from "./links";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { site, phone, whatsapp, links, order, join } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
+import OrderSheet from "./OrderSheet";
 import { useTilt, flightTo, prefersReducedMotion } from "./effects";
 import { getPeriod } from "./sky";
 import "./App.css";
@@ -211,6 +212,8 @@ export default function App() {
   const deliveredRef = useRef(null);
   const [flight, setFlight] = useState(null);
   const [period] = useState(getPeriod);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const closeSheet = useCallback(() => setSheetOpen(false), []);
   const thanks = useThanks();
   useTilt(gridRef);
 
@@ -328,8 +331,51 @@ export default function App() {
             </span>
           </a>
 
+          <button
+            type="button"
+            className="tile tile-order"
+            onClick={() => {
+              track("ouvrir-commande");
+              setSheetOpen(true);
+            }}
+          >
+            <span className="order-txt">
+              <span className="t1">Composer ma commande</span>
+              <span className="t2">
+                Choisissez, décrivez, on livre en {order.delay.replace("~", "")} environ
+              </span>
+            </span>
+            <span className="order-emojis" aria-hidden="true">
+              {order.categories.map((c) => (
+                <span key={c.id}>{c.emoji}</span>
+              ))}
+            </span>
+          </button>
+
           {links.map((item) => (
             <LinkTile key={item.id} item={item} />
+          ))}
+
+          {join.map((j) => (
+            <a
+              key={j.id}
+              className={`tile tile-join tile-${j.id}`}
+              href={`https://wa.me/${whatsapp.number}?text=${encodeURIComponent(j.message)}`}
+              data-track={`clic-${j.id}`}
+            >
+              <span className="tile-top">
+                <span className="tile-icn join-icn" aria-hidden="true">
+                  {j.emoji}
+                </span>
+                <span className="tile-arrow">
+                  <ArrowUpRight />
+                </span>
+              </span>
+              <span className="tile-txt">
+                <span className="t1">{j.title}</span>
+                <span className="t2">{j.subtitle}</span>
+              </span>
+            </a>
           ))}
 
           <ShareTile />
@@ -345,6 +391,15 @@ export default function App() {
       </main>
 
       <ThanksToast show={thanks} />
+
+      <OrderSheet
+        open={sheetOpen}
+        onClose={closeSheet}
+        onSent={() => {
+          track("commande-envoyee");
+          rememberContact();
+        }}
+      />
 
       {flight && (
         <div

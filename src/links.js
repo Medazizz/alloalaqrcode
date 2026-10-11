@@ -16,6 +16,41 @@ export const whatsapp = {
   message: "Bonjour Allo..Ala, je voudrais passer une commande.",
 };
 
+// Formulaire « Composer ma commande » (envoyé sur WhatsApp)
+export const order = {
+  categories: [
+    { id: "restauration", label: "Restauration", emoji: "🍽️" },
+    { id: "cafe", label: "Café & Snacks", emoji: "☕" },
+    { id: "parapharmacie", label: "Parapharmacie", emoji: "💊" },
+    { id: "boutique", label: "Boutique", emoji: "🛍️" },
+    { id: "sur-mesure", label: "Sur-mesure", emoji: "✨" },
+  ],
+  zone: "Sbeïtla & Kasserine",
+  delay: "~30 min",
+  payment: "Paiement à la livraison",
+  fees: "Frais selon la distance, confirmés avant la livraison",
+};
+
+// Rejoindre l'équipe : messages WhatsApp déjà écrits
+export const join = [
+  {
+    id: "livreur",
+    title: "Devenez livreur",
+    subtitle: "Rejoignez l'équipe Allo..Ala",
+    emoji: "🛵",
+    message:
+      "Bonjour Allo..Ala, je souhaite devenir livreur.\n\nNom et prénom : \nVille : \nJ'ai un scooter / une moto : oui / non\nDisponibilités : ",
+  },
+  {
+    id: "commercant",
+    title: "Vous êtes commerçant ?",
+    subtitle: "Vendez avec nous, on livre",
+    emoji: "🏪",
+    message:
+      "Bonjour Allo..Ala, je suis commerçant et je souhaite devenir partenaire.\n\nNom du commerce : \nActivité : \nAdresse : \nTéléphone : ",
+  },
+];
+
 export const site = {
   // Adresse publique de cette page
   url: "https://alloala.com/qrcode/",

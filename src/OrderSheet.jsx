@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { whatsapp, order } from "./links";
 import { WhatsAppLogo } from "./Icons";
+import { confetti } from "./confetti";
 
-function buildMessage({ category, details, address, position, name }) {
+function buildMessage({ category, details, address, position, name, promo }) {
   const cat = order.categories.find((c) => c.id === category);
   const lines = [
     "Bonjour Allo..Ala 👋",
@@ -16,11 +17,12 @@ function buildMessage({ category, details, address, position, name }) {
   if (address.trim()) lines.push(`🏠 Adresse : ${address.trim()}`);
   if (position) lines.push(`📍 Ma position : https://maps.google.com/?q=${position.lat},${position.lng}`);
   if (name.trim()) lines.push(`👤 Nom : ${name.trim()}`);
+  if (promo) lines.push(`${promo.emoji} Offre : ${promo.title}`);
   lines.push("", `💵 ${order.payment}`);
   return lines.join("\n");
 }
 
-export default function OrderSheet({ open, onClose, onSent }) {
+export default function OrderSheet({ open, onClose, onSent, promo }) {
   const [category, setCategory] = useState(order.categories[0].id);
   const [details, setDetails] = useState("");
   const [address, setAddress] = useState("");
@@ -30,6 +32,19 @@ export default function OrderSheet({ open, onClose, onSent }) {
   const [error, setError] = useState("");
   const panelRef = useRef(null);
   const firstFieldRef = useRef(null);
+  const [sending, setSending] = useState(false);
+
+  // Ouvert depuis une offre : on choisit sa catégorie d'office
+  useEffect(() => {
+    if (open && promo?.category) setCategory(promo.category);
+  }, [open, promo]);
+
+  // Retour sur la page après WhatsApp : le bouton redevient normal
+  useEffect(() => {
+    const reset = () => setSending(false);
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
 
   // Ouvert : on bloque le défilement de la page, Échap ferme
   useEffect(() => {
@@ -81,9 +96,20 @@ export default function OrderSheet({ open, onClose, onSent }) {
       return;
     }
     setError("");
-    const text = buildMessage({ category, details, address, position, name });
+    const text = buildMessage({ category, details, address, position, name, promo });
+    const url = `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(text)}`;
     onSent?.();
-    window.location.href = `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(text)}`;
+    setSending(true);
+    // Les confettis partent du bouton, puis WhatsApp s'ouvre
+    const btn = e.currentTarget.querySelector(".sheet-send")?.getBoundingClientRect();
+    confetti({
+      x: btn ? (btn.left + btn.width / 2) / window.innerWidth : 0.5,
+      y: btn ? btn.top / window.innerHeight : 0.8,
+    });
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(() => {
+      window.location.href = url;
+    }, reduce ? 0 : 700);
   }
 
   return (
@@ -113,6 +139,12 @@ export default function OrderSheet({ open, onClose, onSent }) {
             ×
           </button>
         </div>
+
+        {promo && (
+          <p className="sheet-promo">
+            <span aria-hidden="true">{promo.emoji}</span> Offre appliquée : <b>{promo.title}</b>
+          </p>
+        )}
 
         <form className="sheet-form" onSubmit={submit} noValidate>
           <fieldset className="cats">
@@ -176,9 +208,9 @@ export default function OrderSheet({ open, onClose, onSent }) {
 
           {error && <p className="sheet-error" role="alert">{error}</p>}
 
-          <button type="submit" className="sheet-send">
+          <button type="submit" className="sheet-send" disabled={sending}>
             <WhatsAppLogo />
-            Envoyer sur WhatsApp
+            {sending ? "Commande envoyée ! 🎉" : "Envoyer sur WhatsApp"}
           </button>
           <p className="sheet-note">{order.fees}.</p>
         </form>

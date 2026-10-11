@@ -3,6 +3,8 @@ import { site, phone, whatsapp, links, order, join } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
 import OrderSheet from "./OrderSheet";
+import PromoBanner from "./Promo";
+import HowItWorks from "./HowItWorks";
 import { useTilt, flightTo, prefersReducedMotion } from "./effects";
 import { getPeriod } from "./sky";
 import "./App.css";
@@ -213,6 +215,11 @@ export default function App() {
   const [flight, setFlight] = useState(null);
   const [period] = useState(getPeriod);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetPromo, setSheetPromo] = useState(null);
+  const openSheet = (promo = null) => {
+    setSheetPromo(promo);
+    setSheetOpen(true);
+  };
   const closeSheet = useCallback(() => setSheetOpen(false), []);
   const thanks = useThanks();
   useTilt(gridRef);
@@ -292,6 +299,13 @@ export default function App() {
           <Scene period={period} />
         </header>
 
+        <PromoBanner
+          onPick={(promo) => {
+            track(`offre-${promo.id}`);
+            openSheet(promo);
+          }}
+        />
+
         <section
           className="bento"
           ref={gridRef}
@@ -336,7 +350,7 @@ export default function App() {
             className="tile tile-order"
             onClick={() => {
               track("ouvrir-commande");
-              setSheetOpen(true);
+              openSheet();
             }}
           >
             <span className="order-txt">
@@ -381,6 +395,8 @@ export default function App() {
           <ShareTile />
         </section>
 
+        <HowItWorks />
+
         <Marquee />
 
         <footer>
@@ -394,6 +410,7 @@ export default function App() {
 
       <OrderSheet
         open={sheetOpen}
+        promo={sheetPromo}
         onClose={closeSheet}
         onSent={() => {
           track("commande-envoyee");

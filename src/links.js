@@ -31,6 +31,27 @@ export const order = {
   fees: "Frais selon la distance, confirmés avant la livraison",
 };
 
+// Offres en cours (reprises de alloala.com). Chaque offre disparaît
+// toute seule après sa date de fin (heure de Tunisie, +01:00).
+// category (facultatif) : catégorie choisie d'office dans le formulaire.
+export const promos = [
+  {
+    id: "bienvenue",
+    emoji: "🎁",
+    title: "−15 % sur votre 1ʳᵉ commande",
+    detail: "Tous commerces confondus",
+    ends: "2026-10-23T23:59:59+01:00",
+  },
+  {
+    id: "parapharmacie",
+    emoji: "💊",
+    title: "−20 % sur la parapharmacie",
+    detail: "Ce week-end seulement",
+    ends: "2026-10-14T23:59:59+01:00",
+    category: "parapharmacie",
+  },
+];
+
 // Rejoindre l'équipe : messages WhatsApp déjà écrits
 export const join = [
   {

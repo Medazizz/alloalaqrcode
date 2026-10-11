@@ -3,6 +3,7 @@ import { site, phone, whatsapp, links } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
 import { useTilt, flightTo, prefersReducedMotion } from "./effects";
+import { getPeriod } from "./sky";
 import "./App.css";
 
 const logo = `${import.meta.env.BASE_URL}logo.png`;
@@ -89,6 +90,99 @@ function LinkTile({ item }) {
   );
 }
 
+// "Allo..Ala" qui apparaît lettre par lettre ; les deux points
+// clignotent comme un téléphone qui sonne.
+function Wordmark({ as: Tag = "span", className }) {
+  const letters = [..."Allo..Ala"];
+  return (
+    <Tag className={`${className} wm`} aria-label="Allo..Ala">
+      {letters.map((ch, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className={`ch ${i < 6 ? "a1" : "a2"}${ch === "." ? " dot" : ""}`}
+          style={{ "--c": i }}
+        >
+          {ch}
+        </span>
+      ))}
+    </Tag>
+  );
+}
+
+// Taches de lumière floues qui dérivent lentement derrière la page
+function Glow() {
+  return (
+    <div className="glow" aria-hidden="true">
+      <span className="blob b1" />
+      <span className="blob b2" />
+      <span className="blob b3" />
+    </div>
+  );
+}
+
+// « Merci ! On arrive » quand le client revient après avoir appelé
+// ou écrit sur WhatsApp.
+const THANKS_KEY = "aa-thanks";
+function rememberContact() {
+  try {
+    sessionStorage.setItem(THANKS_KEY, String(Date.now()));
+  } catch {
+    // stockage indisponible (navigation privée…) : pas de message
+  }
+}
+function useThanks() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    let hideTimer = 0;
+    const check = () => {
+      if (document.visibilityState !== "visible") return;
+      let t = 0;
+      try {
+        t = Number(sessionStorage.getItem(THANKS_KEY));
+      } catch {
+        return;
+      }
+      const age = Date.now() - t;
+      if (!t || age < 1500 || age > 30 * 60 * 1000) return;
+      try {
+        sessionStorage.removeItem(THANKS_KEY);
+      } catch {
+        // rien
+      }
+      setShow(true);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setShow(false), 4200);
+    };
+    check();
+    document.addEventListener("visibilitychange", check);
+    window.addEventListener("pageshow", check);
+    return () => {
+      document.removeEventListener("visibilitychange", check);
+      window.removeEventListener("pageshow", check);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+  return show;
+}
+
+function ThanksToast({ show }) {
+  return (
+    <div className={`thanks${show ? " is-on" : ""}`} role="status" aria-live="polite">
+      {show && (
+        <>
+          <span className="thanks-scooter">
+            <Scooter />
+          </span>
+          <span>
+            <strong>Merci !</strong> On arrive 🛵
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
+
 // Les deux bandeaux croisés avec le slogan qui défile
 function Marquee() {
   const item = (
@@ -116,7 +210,14 @@ export default function App() {
   const gridRef = useRef(null);
   const deliveredRef = useRef(null);
   const [flight, setFlight] = useState(null);
+  const [period] = useState(getPeriod);
+  const thanks = useThanks();
   useTilt(gridRef);
+
+  // Le moment de la journée colore toute la page (lumières, soleil…)
+  useEffect(() => {
+    document.documentElement.dataset.sky = period;
+  }, [period]);
 
   // Retour sur la page avec le bouton "précédent" : on remet tout à zéro
   useEffect(() => {
@@ -133,6 +234,9 @@ export default function App() {
     const tile = e.target.closest("a.tile");
     if (!tile) return;
     track(tile.dataset.track);
+    if (tile.classList.contains("tile-call") || tile.classList.contains("tile-whatsapp")) {
+      rememberContact();
+    }
     if (tile.classList.contains("tile-call")) return; // l'appel part tout de suite
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     if (prefersReducedMotion() || flight) return;
@@ -152,14 +256,12 @@ export default function App() {
 
   return (
     <div className="stage">
+      <Glow />
       <aside className="side">
         <div className="side-mark">
           <img src={logo} alt="Logo Allo..Ala" />
         </div>
-        <div className="big">
-          <span className="a1">Allo..</span>
-          <span className="a2">Ala</span>
-        </div>
+        <Wordmark className="big" />
         <p>
           Un coup de fil, et le reste nous regarde. Livraison, commandes et
           services, à Sbeïtla et alentours.
@@ -174,10 +276,7 @@ export default function App() {
           <div className="brand">
             <img className="mark" src={logo} alt="Logo Allo..Ala" />
             <div className="brand-txt">
-              <h1 className="wordmark">
-                <span className="a1">Allo..</span>
-                <span className="a2">Ala</span>
-              </h1>
+              <Wordmark as="h1" className="wordmark" />
               <p className="tagline-ar">
                 <span className="k1">كلمني</span> ...{" "}
                 <span className="k2">نفضهالك</span>
@@ -187,7 +286,7 @@ export default function App() {
           <p className="tagline-fr">
             Livraison &amp; commandes à Sbeïtla — sur simple appel.
           </p>
-          <Scene />
+          <Scene period={period} />
         </header>
 
         <section
@@ -244,6 +343,8 @@ export default function App() {
           Tous droits réservés.
         </footer>
       </main>
+
+      <ThanksToast show={thanks} />
 
       {flight && (
         <div

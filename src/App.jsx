@@ -1,35 +1,160 @@
-import { phone, links } from "./links";
-import { iconMap, Phone, Chevron, Scooter } from "./Icons";
+import { useEffect, useRef, useState } from "react";
+import { site, phone, whatsapp, links } from "./links";
+import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
+import Scene from "./Scene";
+import { useTilt, flightTo, prefersReducedMotion } from "./effects";
 import "./App.css";
 
-function LinkRow({ item }) {
-  const Icon = item.icon ? iconMap[item.icon] : null;
+const logo = `${import.meta.env.BASE_URL}logo.png`;
+
+// Compte un clic dans GoatCounter (ignoré en local)
+function track(name) {
+  window.goatcounter?.count?.({ path: name, title: name, event: true });
+}
+
+// Bouton "Partager" : menu de partage du téléphone, sinon copie du lien.
+// Le lien partagé porte ?src=partage pour être compté à part dans GoatCounter.
+function ShareTile() {
+  const [copied, setCopied] = useState(false);
+  const url = `${site.url}?src=partage`;
+
+  async function share() {
+    track("clic-partager");
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Allo..Ala", text: site.shareText, url });
+      } catch {
+        // partage annulé par l'utilisateur
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    } catch {
+      window.prompt("Copiez ce lien :", url);
+    }
+  }
+
   return (
-    <a className="row" href={item.url} target="_blank" rel="noopener noreferrer">
-      <span className={`icn ${item.brand ? "brand" : "navy"}`}>
-        {item.image ? (
-          <img src={item.image} alt="" className="icn-img" />
+    <button type="button" className="tile tile-share" onClick={share}>
+      <Share />
+      <span>{copied ? "Lien copié !" : "Partager Allo..Ala avec un ami"}</span>
+    </button>
+  );
+}
+
+// Une tuile de la grille : réseau social, site, application…
+function LinkTile({ item }) {
+  const Icon = item.icon ? iconMap[item.icon] : null;
+  const soon = !item.url;
+
+  const content = (
+    <>
+      <span className="tile-top">
+        <span className="tile-icn">
+          {item.image ? <img src={item.image} alt="" /> : <Icon />}
+        </span>
+        {soon ? (
+          <span className="badge">Bientôt</span>
         ) : (
-          <Icon />
+          <span className="tile-arrow">
+            <ArrowUpRight />
+          </span>
         )}
       </span>
-      <span className="body">
+      <span className="tile-txt">
         <span className="t1">{item.title}</span>
         <span className="t2">{item.subtitle}</span>
       </span>
-      <span className="chev">
-        <Chevron />
-      </span>
+    </>
+  );
+
+  const className = `tile tile-${item.id}${soon ? " is-soon" : ""}`;
+
+  // Pas encore de lien : la tuile reste visible mais ne s'ouvre pas
+  if (soon) {
+    return (
+      <div className={className} aria-disabled="true">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <a className={className} href={item.url} data-track={`clic-${item.id}`}>
+      {content}
     </a>
   );
 }
 
+// Les deux bandeaux croisés avec le slogan qui défile
+function Marquee() {
+  const item = (
+    <span className="mq-item">
+      <span lang="ar" dir="rtl">كلمني ... نفضهالك</span>
+      <span className="mq-star">✦</span>
+      <span className="mq-latin">Allo..Ala</span>
+      <span className="mq-star">✦</span>
+    </span>
+  );
+  const half = <span className="mq-half">{item}{item}{item}{item}</span>;
+  return (
+    <div className="marquee" aria-hidden="true">
+      <div className="band band-back">
+        <div className="track">{half}{half}</div>
+      </div>
+      <div className="band band-front">
+        <div className="track">{half}{half}</div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
+  const gridRef = useRef(null);
+  const deliveredRef = useRef(null);
+  const [flight, setFlight] = useState(null);
+  useTilt(gridRef);
+
+  // Retour sur la page avec le bouton "précédent" : on remet tout à zéro
+  useEffect(() => {
+    const reset = () => {
+      setFlight(null);
+      deliveredRef.current?.classList.remove("delivered");
+    };
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
+
+  // Clic sur une tuile : la mobylette vole jusqu'à elle, puis le lien s'ouvre
+  function onGridClick(e) {
+    const tile = e.target.closest("a.tile");
+    if (!tile) return;
+    track(tile.dataset.track);
+    if (tile.classList.contains("tile-call")) return; // l'appel part tout de suite
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (prefersReducedMotion() || flight) return;
+    e.preventDefault();
+    deliveredRef.current = tile;
+    setFlight({ ...flightTo(tile), url: tile.href });
+  }
+
+  function onArrive(e) {
+    if (e.target !== e.currentTarget) return;
+    deliveredRef.current?.classList.add("delivered");
+    const url = flight.url;
+    setTimeout(() => {
+      window.location.href = url;
+    }, 260);
+  }
+
   return (
     <div className="stage">
-      <div className="side">
+      <aside className="side">
         <div className="side-mark">
-          <img src="/logo.png" alt="Logo Allo..Ala" />
+          <img src={logo} alt="Logo Allo..Ala" />
         </div>
         <div className="big">
           <span className="a1">Allo..</span>
@@ -42,83 +167,101 @@ export default function App() {
         <div className="ar">
           <span>كلمني</span> ... نفضهالك
         </div>
-      </div>
+      </aside>
 
-      <div className="phone">
+      <main className="phone">
         <header className="hero">
-          <svg className="signal" viewBox="0 0 360 200" aria-hidden="true">
-            <path d="M 60 150 A 150 150 0 0 1 300 150" />
-            <path d="M 90 150 A 120 120 0 0 1 270 150" />
-            <path d="M 120 150 A 90 90 0 0 1 240 150" />
-          </svg>
-
-          <div className="scooter-lane" aria-hidden="true">
-            <div className="scooter scooter-1">
-              <Scooter />
-            </div>
-            <div className="scooter scooter-2">
-              <Scooter />
+          <div className="brand">
+            <img className="mark" src={logo} alt="Logo Allo..Ala" />
+            <div className="brand-txt">
+              <h1 className="wordmark">
+                <span className="a1">Allo..</span>
+                <span className="a2">Ala</span>
+              </h1>
+              <p className="tagline-ar">
+                <span className="k1">كلمني</span> ...{" "}
+                <span className="k2">نفضهالك</span>
+              </p>
             </div>
           </div>
-
-          <div className="mark">
-            <img src="/logo.png" alt="Logo Allo..Ala" />
-          </div>
-
-          <h1 className="wordmark">
-            <span className="a1">Allo..</span>
-            <span className="a2">Ala</span>
-          </h1>
-
-          <svg className="sweep" viewBox="0 0 150 14" aria-hidden="true">
-            <defs>
-              <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0E2A5C" />
-                <stop offset="100%" stopColor="#EF6C1C" />
-              </linearGradient>
-            </defs>
-            <path className="track" d="M4 7 H130" />
-            <path
-              className="track"
-              d="M120 2 L134 7 L120 12"
-              style={{ stroke: "#EF6C1C", fill: "none" }}
-            />
-          </svg>
-
-          <p className="tagline-ar">
-            <span className="k1">كلمني</span> ...{" "}
-            <span className="k2">نفضهالك</span>
-          </p>
           <p className="tagline-fr">
-            Votre service livraison &amp; commandes, à Sbeïtla — sur simple
-            appel.
+            Livraison &amp; commandes à Sbeïtla — sur simple appel.
           </p>
+          <Scene />
         </header>
 
-        <a className="call" href={`tel:${phone.tel}`}>
-          <span className="icn">
-            <Phone />
-          </span>
-          <span className="txt">
-            <span className="l1">Appelez pour commander</span>
-            <span className="l2">Réponse rapide, tous les jours</span>
-          </span>
-          <span className="num">{phone.display}</span>
-        </a>
+        <section
+          className="bento"
+          ref={gridRef}
+          onClick={onGridClick}
+          aria-label="Commander et nous suivre"
+        >
+          <a className="tile tile-call" href={`tel:${phone.tel}`} data-track="clic-appel">
+            <span className="call-txt">
+              <span className="l1">
+                <span className="live-dot" />
+                Appel entrant · Allo..Ala
+              </span>
+              <span className="num">{phone.display}</span>
+              <span className="l2">Décrochez pour commander</span>
+            </span>
+            <span className="call-btn">
+              <Phone />
+            </span>
+          </a>
 
-        <p className="section-label">NOS PLATEFORMES</p>
-        <nav className="card">
+          <a
+            className="tile tile-whatsapp"
+            href={`https://wa.me/${whatsapp.number}?text=${encodeURIComponent(whatsapp.message)}`}
+            data-track="clic-whatsapp"
+          >
+            <span className="tile-top">
+              <span className="tile-icn">
+                <WhatsAppLogo />
+              </span>
+              <span className="tile-arrow">
+                <ArrowUpRight />
+              </span>
+            </span>
+            <span className="tile-txt">
+              <span className="t1">Commander sur WhatsApp</span>
+              <span className="t2">Écrivez-nous, on s'occupe du reste</span>
+            </span>
+          </a>
+
           {links.map((item) => (
-            <LinkRow key={item.id} item={item} />
+            <LinkTile key={item.id} item={item} />
           ))}
-        </nav>
+
+          <ShareTile />
+        </section>
+
+        <Marquee />
 
         <footer>
           Sbeïtla, Tunisie · © {new Date().getFullYear()} Allo..Ala
           <br />
           Tous droits réservés.
         </footer>
-      </div>
+      </main>
+
+      {flight && (
+        <div
+          className={`flight${flight.flip ? " flip" : ""}`}
+          style={{
+            "--x0": `${flight.x0}px`,
+            "--y0": `${flight.y0}px`,
+            "--x1": `${flight.x1}px`,
+            "--y1": `${flight.y1}px`,
+            "--xm": `${(flight.x0 + flight.x1) / 2}px`,
+            "--ym": `${Math.min(flight.y0, flight.y1) - 70}px`,
+          }}
+          onAnimationEnd={onArrive}
+          aria-hidden="true"
+        >
+          <Scooter />
+        </div>
+      )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Puis ouvre l'adresse affichée dans le terminal (en général http://localhost:5173).
+Puis ouvre l'adresse affichée dans le terminal : http://localhost:5173/qrcode/
 La page se recharge toute seule à chaque fois que tu sauvegardes un fichier.
 
 ## Modifier les liens et le numéro
@@ -24,14 +24,40 @@ le numéro de téléphone ou les adresses des réseaux sociaux.
 Les couleurs sont des variables en haut de `src/App.css`, dans le bloc `:root`.
 Modifie `--navy` et `--orange` et toute la page suit.
 
-## Mettre en ligne
+## Mettre en ligne (https://alloala.com/qrcode)
 
 ```bash
 npm run build
 ```
 
-Cela crée un dossier `dist`. Fais glisser ce dossier sur
-[app.netlify.com/drop](https://app.netlify.com/drop) et le site est en ligne.
+Cela crée un dossier `dist`. Copie **tout son contenu** dans le dossier
+`qrcode` de ton hébergement, pour que la page s'ouvre sur
+https://alloala.com/qrcode/
+
+Si un jour l'adresse change, modifie `base` dans `vite.config.js`,
+`site.url` dans `src/links.js` et les adresses `alloala.com/qrcode` dans `index.html`.
+
+## Le QR code
+
+Fais pointer le QR code vers :
+
+```
+https://alloala.com/qrcode/?src=qr
+```
+
+Le `?src=qr` permet de compter les scans dans les statistiques.
+Pour savoir quel support rapporte le plus, utilise un code différent par
+support : `?src=flyer`, `?src=vitrine`, `?src=scooter`…
+
+## Statistiques (GoatCounter)
+
+Tableau de bord : https://mohamedaziz.goatcounter.com
+
+- **Visites** : chaque ouverture de la page.
+- **Sources** (« Referrers ») : `qr`, `flyer`, `partage`… selon le `?src=`.
+- **Clics** : `clic-appel`, `clic-whatsapp`, `clic-instagram`, `clic-partager`…
+
+Les visites depuis ton ordinateur en local (localhost) ne sont pas comptées.
 
 ## Structure
 

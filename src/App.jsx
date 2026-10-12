@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { site, phone, whatsapp, links, order, join, game } from "./links";
+import { site, phone, whatsapp, links, join, game } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
-import OrderSheet from "./OrderSheet";
 import PromoBanner from "./Promo";
 import HowItWorks from "./HowItWorks";
 import { useTilt, flightTo, prefersReducedMotion } from "./effects";
@@ -214,13 +213,6 @@ export default function App() {
   const deliveredRef = useRef(null);
   const [flight, setFlight] = useState(null);
   const [period] = useState(getPeriod);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [sheetPromo, setSheetPromo] = useState(null);
-  const openSheet = (promo = null) => {
-    setSheetPromo(promo);
-    setSheetOpen(true);
-  };
-  const closeSheet = useCallback(() => setSheetOpen(false), []);
   const thanks = useThanks();
   useTilt(gridRef);
 
@@ -301,8 +293,11 @@ export default function App() {
 
         <PromoBanner
           onPick={(promo) => {
+            // l'offre ouvre WhatsApp avec un message qui la mentionne
             track(`offre-${promo.id}`);
-            openSheet(promo);
+            rememberContact();
+            const text = `Bonjour Allo..Ala, je voudrais profiter de l'offre « ${promo.title} ».`;
+            window.location.href = `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(text)}`;
           }}
         />
 
@@ -344,27 +339,6 @@ export default function App() {
               <span className="t2">Écrivez-nous, on s'occupe du reste</span>
             </span>
           </a>
-
-          <button
-            type="button"
-            className="tile tile-order"
-            onClick={() => {
-              track("ouvrir-commande");
-              openSheet();
-            }}
-          >
-            <span className="order-txt">
-              <span className="t1">Composer ma commande</span>
-              <span className="t2">
-                Choisissez, décrivez, on livre en {order.delay.replace("~", "")} environ
-              </span>
-            </span>
-            <span className="order-emojis" aria-hidden="true">
-              {order.categories.map((c) => (
-                <span key={c.id}>{c.emoji}</span>
-              ))}
-            </span>
-          </button>
 
           {/* Le site de jeux : nouveauté annoncée sur la page */}
           <a className="tile tile-game" href={game.url} data-track="clic-jeu">
@@ -425,16 +399,6 @@ export default function App() {
       </main>
 
       <ThanksToast show={thanks} />
-
-      <OrderSheet
-        open={sheetOpen}
-        promo={sheetPromo}
-        onClose={closeSheet}
-        onSent={() => {
-          track("commande-envoyee");
-          rememberContact();
-        }}
-      />
 
       {flight && (
         <div

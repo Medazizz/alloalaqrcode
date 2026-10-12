@@ -6,7 +6,7 @@ import { order } from "./links";
 
 const steps = [
   { emoji: "🛍️", title: "Choisissez", text: "dans les commerces de votre ville" },
-  { emoji: "📲", title: "Commandez", text: "par appel, WhatsApp ou formulaire" },
+  { emoji: "📲", title: "Commandez", text: "par appel ou sur WhatsApp" },
   { emoji: "🏠", title: "Recevez", text: `à votre porte, en ${order.delay.replace("~", "")} environ` },
 ];
 

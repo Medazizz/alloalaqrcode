@@ -523,7 +523,6 @@ a.tile:active, button.tile:active{ --press: 0.97; }
 
 /* Ordre d'affichage dans la grille (et ordre d'apparition) */
 .tile-call       { order: 0;  --i: 0; }
-.tile-order      { order: 1;  --i: 1; }
 .tile-game       { order: 2;  --i: 2; }
 .tile-whatsapp   { order: 3;  --i: 3; }
 .tile-instagram  { order: 4;  --i: 4; }
@@ -770,58 +769,6 @@ a.tile:active, button.tile:active{ --press: 0.97; }
   white-space: nowrap;
 }
 
-/* --- Composer ma commande --- */
-.tile-order{
-  grid-column: span 4;
-  flex-direction: column-reverse;
-  align-items: stretch;
-  gap: 14px;
-  min-height: 0;
-  padding: 16px;
-  border: 1.5px solid rgba(255,163,95,0.45);
-  background:
-    radial-gradient(120% 90% at 100% 0%, rgba(255,132,56,0.28), transparent 60%),
-    linear-gradient(160deg, #163B78 0%, #0F2C5E 100%);
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.order-txt{ display: flex; flex-direction: column; gap: 3px; }
-.tile-order .t1{ font-size: 18px; }
-.tile-order .t1::after{
-  content: "→";
-  margin-left: 8px;
-  color: var(--orange-light);
-  display: inline-block;
-  transition: transform 160ms ease;
-}
-@media (hover: hover){
-  .tile-order:hover .t1::after{ transform: translateX(4px); }
-}
-.order-emojis{ display: flex; gap: 8px; }
-.order-emojis span{
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  background: rgba(255,255,255,0.08);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
-  animation: hop 3.2s ease-in-out infinite;
-  animation-delay: calc(var(--intro, 0ms) + 1.2s);
-}
-.order-emojis span:nth-child(2){ animation-delay: calc(var(--intro, 0ms) + 1.32s); }
-.order-emojis span:nth-child(3){ animation-delay: calc(var(--intro, 0ms) + 1.44s); }
-.order-emojis span:nth-child(4){ animation-delay: calc(var(--intro, 0ms) + 1.56s); }
-.order-emojis span:nth-child(5){ animation-delay: calc(var(--intro, 0ms) + 1.68s); }
-@keyframes hop{
-  0%, 20%, 100%{ transform: none; }
-  8%{ transform: translateY(-6px); }
-}
-
 /* --- Le site de jeux (nouveauté) --- */
 .tile-game{
   grid-column: span 4;
@@ -1024,27 +971,6 @@ a.tile:active, button.tile:active{ --press: 0.97; }
   100%     { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); }
 }
 
-/* ---------- CONFETTIS ---------- */
-.confetti{
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 95;
-  pointer-events: none;
-}
-.sheet-promo{
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255,132,56,0.14);
-  border: 1px solid rgba(255,163,95,0.4);
-  font-size: 13.5px;
-  color: #FFD3B0;
-}
-.sheet-promo b{ color: #fff; }
-.sheet-send:disabled{ cursor: default; filter: saturate(1.1) brightness(1.05); }
-
 /* ---------- BANDEAUX CROISÉS (slogan qui défile) ---------- */
 .marquee{
   position: relative;
@@ -1098,164 +1024,6 @@ a.tile:active, button.tile:active{ --press: 0.97; }
 }
 .mq-star{ font-size: 16px; opacity: 0.8; }
 @keyframes marquee{ to{ transform: translateX(-50%); } }
-
-/* ---------- FORMULAIRE DE COMMANDE (feuille en bas d'écran) ---------- */
-.sheet-wrap{
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  pointer-events: none;
-}
-.sheet-wrap.is-open{ pointer-events: auto; }
-.sheet-backdrop{
-  position: absolute;
-  inset: 0;
-  background: rgba(5,15,38,0.6);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  transition: opacity 250ms ease;
-}
-.sheet-wrap.is-open .sheet-backdrop{ opacity: 1; }
-.sheet{
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 100%;
-  max-width: 480px;
-  max-height: 92dvh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
-  border-radius: 26px 26px 0 0;
-  background: #0F2C5E;
-  border: 1px solid var(--hairline);
-  border-bottom: none;
-  box-shadow: 0 -20px 60px -20px rgba(0,0,0,0.7);
-  color: var(--text);
-  transform: translate(-50%, 105%);
-  transition: transform 380ms cubic-bezier(.2,.9,.25,1);
-  outline: none;
-}
-.sheet-wrap.is-open .sheet{ transform: translate(-50%, 0); }
-.sheet-handle{
-  width: 42px;
-  height: 5px;
-  margin: 2px auto 10px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.25);
-}
-.sheet-head{
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.sheet-head h2{
-  margin: 0;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 22px;
-  letter-spacing: -0.01em;
-}
-.sheet-sub{ margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
-.sheet-close{
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  color: var(--text);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-}
-.sheet-form{ display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
-.cats{ border: none; margin: 0; padding: 0; min-width: 0; }
-.cats legend, .field > span{
-  display: block;
-  margin-bottom: 7px;
-  padding: 0;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.field em{ font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 500; opacity: 0.8; }
-.cats-row{ display: flex; flex-wrap: wrap; gap: 8px; }
-.cat{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 13px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.07);
-  border: 1.5px solid transparent;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease;
-}
-.cat input{ position: absolute; opacity: 0; pointer-events: none; }
-.cat.is-on{ background: rgba(255,132,56,0.18); border-color: var(--orange); color: #fff; }
-.cat:has(input:focus-visible){ outline: 3px solid var(--orange-light); outline-offset: 2px; }
-.cat-emoji{ font-size: 17px; }
-.field{ display: flex; flex-direction: column; gap: 8px; }
-.field > span{ margin-bottom: 0; }
-.field input, .field textarea{
-  width: 100%;
-  padding: 13px 14px;
-  border-radius: 14px;
-  border: 1.5px solid rgba(255,255,255,0.14);
-  background: rgba(5,15,38,0.45);
-  color: var(--text);
-  font: inherit;
-  font-size: 16px; /* évite le zoom automatique sur iPhone */
-  resize: vertical;
-}
-.field input::placeholder, .field textarea::placeholder{ color: rgba(169,184,214,0.7); }
-.field input:focus, .field textarea:focus{ outline: none; border-color: var(--orange); }
-.locate{
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1.5px dashed rgba(255,163,95,0.6);
-  background: rgba(255,132,56,0.08);
-  color: var(--orange-light);
-  font: inherit;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-}
-.locate.is-done{ border-style: solid; border-color: #25D366; background: rgba(37,211,102,0.12); color: #6BE69A; }
-.locate:disabled{ opacity: 0.7; cursor: progress; }
-.sheet-error{
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255,90,90,0.14);
-  color: #FFB4B4;
-  font-size: 14px;
-}
-.sheet-send{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 54px;
-  border: none;
-  border-radius: 16px;
-  background: linear-gradient(165deg, #2BE07A, #128C7E);
-  color: #fff;
-  font: inherit;
-  font-weight: 800;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 14px 28px -14px rgba(37,211,102,0.8);
-}
-.sheet-send svg{ width: 22px; height: 22px; }
-.sheet-send:active{ transform: scale(0.98); }
-.sheet-note{ margin: -4px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
 
 /* ---------- « MERCI ! ON ARRIVE » ---------- */
 .thanks{
@@ -1439,12 +1207,11 @@ footer{
 @media (prefers-reduced-motion: reduce){
   .tile, .tile-call, .call-btn::after, .call-btn svg, .live-dot,
   .road-line, .pin, .track, .flight, .blob, .star, .clouds,
-  .wm .ch, .wm .dot, .thanks-scooter, .order-emojis span,
+  .wm .ch, .wm .dot, .thanks-scooter,
   .promo, .promo-slide, .promo-emoji{ animation: none; }
   .tile-game::before, .game-deco i, .game-new{ animation: none; }
   .how.is-visible .how-scooter{ animation: none; opacity: 1; left: 50%; }
   .how.is-visible .how-icn{ animation: none; }
-  .sheet, .sheet-backdrop{ transition: none; }
   .layer-far, .layer-mid{ transform: none; }
   .sky path{ animation: none; stroke-dashoffset: 0; }
   .tile, .tile-arrow{ transition: none; }

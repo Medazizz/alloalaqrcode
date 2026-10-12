@@ -16,24 +16,14 @@ export const whatsapp = {
   message: "Bonjour Allo..Ala, je voudrais passer une commande.",
 };
 
-// Formulaire « Composer ma commande » (envoyé sur WhatsApp)
+// Délai de livraison annoncé (section « Comment ça marche »)
 export const order = {
-  categories: [
-    { id: "restauration", label: "Restauration", emoji: "🍽️" },
-    { id: "cafe", label: "Café & Snacks", emoji: "☕" },
-    { id: "parapharmacie", label: "Parapharmacie", emoji: "💊" },
-    { id: "boutique", label: "Boutique", emoji: "🛍️" },
-    { id: "sur-mesure", label: "Sur-mesure", emoji: "✨" },
-  ],
-  zone: "Sbeïtla & Kasserine",
   delay: "~30 min",
-  payment: "Paiement à la livraison",
-  fees: "Frais selon la distance, confirmés avant la livraison",
 };
 
 // Offres en cours (reprises de alloala.com). Chaque offre disparaît
 // toute seule après sa date de fin (heure de Tunisie, +01:00).
-// category (facultatif) : catégorie choisie d'office dans le formulaire.
+// Toucher une offre ouvre WhatsApp avec un message qui la mentionne.
 export const promos = [
   {
     id: "bienvenue",
@@ -48,7 +38,6 @@ export const promos = [
     title: "−20 % sur la parapharmacie",
     detail: "Ce week-end seulement",
     ends: "2026-10-14T23:59:59+01:00",
-    category: "parapharmacie",
   },
 ];
 

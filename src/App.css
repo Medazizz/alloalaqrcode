@@ -344,111 +344,6 @@ a:focus-visible, button:focus-visible{
 .sc-box{ fill: var(--orange); }
 .sc-lines{ stroke: rgba(255,255,255,0.45); fill: none; }
 
-/* ---------- BANDEAU DES OFFRES ---------- */
-.promo{
-  position: relative;
-  display: block;
-  width: 100%;
-  margin: 4px 0 12px;
-  padding: 0;
-  border: none;
-  border-radius: 18px;
-  background:
-    linear-gradient(100deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 70%) -150% 0 / 60% 100% no-repeat,
-    linear-gradient(120deg, #FFD3B0 0%, #FFF3E8 55%, #FFE2C9 100%);
-  color: var(--navy);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 14px 30px -16px rgba(255,132,56,0.7);
-  animation:
-    promo-in 600ms cubic-bezier(.2,.9,.3,1.2) backwards,
-    shine 4.5s ease-in-out infinite;
-  animation-delay: calc(var(--intro, 0ms) + 200ms), calc(var(--intro, 0ms) + 1.5s);
-}
-@keyframes promo-in{
-  from{ opacity: 0; transform: translateY(-10px) scale(0.97); }
-}
-/* Reflet qui balaie le bandeau */
-@keyframes shine{
-  0%, 60%{ background-position: -150% 0, 0 0; }
-  100%{ background-position: 250% 0, 0 0; }
-}
-.promo-slide{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
-  animation: promo-slide 450ms cubic-bezier(.2,.9,.3,1) backwards;
-}
-@keyframes promo-slide{
-  from{ opacity: 0; transform: translateX(24px); }
-}
-.promo-emoji{
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 21px;
-  background: #fff;
-  box-shadow: 0 6px 14px -8px rgba(239,108,28,0.6);
-  animation: wobble 2.4s ease-in-out infinite;
-}
-@keyframes wobble{
-  0%, 70%, 100%{ transform: rotate(0); }
-  76%{ transform: rotate(-12deg) scale(1.08); }
-  84%{ transform: rotate(10deg) scale(1.08); }
-  92%{ transform: rotate(-4deg); }
-}
-.promo-txt{ flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.promo-title{ font-weight: 800; font-size: 15px; line-height: 1.25; }
-.promo-time{ font-size: 12px; color: #6A4A33; }
-.promo-time b{ color: var(--orange-deep); font-variant-numeric: tabular-nums; }
-.promo.is-urgent .promo-time b{ color: #D93A1E; }
-.promo-go{
-  flex: none;
-  padding: 7px 10px;
-  border-radius: 99px;
-  background: var(--navy);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-/* Sur téléphone, le bouton devient une simple flèche ronde */
-@media (max-width: 440px){
-  .promo-go{
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0;
-  }
-  .promo-go::after{ content: "→"; font-size: 16px; }
-}
-.promo-dots{
-  position: absolute;
-  left: 50%;
-  bottom: 4px;
-  display: flex;
-  gap: 4px;
-  transform: translateX(-50%);
-}
-.promo-dots i{
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(14,42,92,0.25);
-  transition: width 200ms ease, background 200ms ease;
-}
-.promo-dots i.on{ width: 14px; border-radius: 3px; background: var(--orange-deep); }
-
 /* ---------- GRILLE BENTO ---------- */
 .bento{
   display: grid;
@@ -1112,7 +1007,6 @@ footer{
   .tile-whatsapp .tile-icn{ width: 46px; height: 46px; padding: 10px; }
   .tile-whatsapp .t1{ font-size: 16.5px; }
   .call-txt .l1{ font-size: 11px; }
-  .promo-go{ display: none; }
   .how{ padding: 16px 10px 14px; }
   .how-icn{ width: 50px; height: 50px; font-size: 23px; }
   .how-step strong{ font-size: 13.5px; }
@@ -1208,7 +1102,6 @@ footer{
   .tile, .tile-call, .call-btn::after, .call-btn svg, .live-dot,
   .road-line, .pin, .track, .flight, .blob, .star, .clouds,
   .wm .ch, .wm .dot, .thanks-scooter,
-  .promo, .promo-slide, .promo-emoji{ animation: none; }
   .tile-game::before, .game-deco i, .game-new{ animation: none; }
   .how.is-visible .how-scooter{ animation: none; opacity: 1; left: 50%; }
   .how.is-visible .how-icn{ animation: none; }

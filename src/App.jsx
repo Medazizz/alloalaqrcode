@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { site, phone, whatsapp, links, join, game } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
-import PromoBanner from "./Promo";
 import HowItWorks from "./HowItWorks";
 import { useTilt, flightTo, prefersReducedMotion } from "./effects";
 import { getPeriod } from "./sky";
@@ -290,16 +289,6 @@ export default function App() {
           </p>
           <Scene period={period} />
         </header>
-
-        <PromoBanner
-          onPick={(promo) => {
-            // l'offre ouvre WhatsApp avec un message qui la mentionne
-            track(`offre-${promo.id}`);
-            rememberContact();
-            const text = `Bonjour Allo..Ala, je voudrais profiter de l'offre « ${promo.title} ».`;
-            window.location.href = `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(text)}`;
-          }}
-        />
 
         <section
           className="bento"

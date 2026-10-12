@@ -21,26 +21,6 @@ export const order = {
   delay: "~30 min",
 };
 
-// Offres en cours (reprises de alloala.com). Chaque offre disparaît
-// toute seule après sa date de fin (heure de Tunisie, +01:00).
-// Toucher une offre ouvre WhatsApp avec un message qui la mentionne.
-export const promos = [
-  {
-    id: "bienvenue",
-    emoji: "🎁",
-    title: "−15 % sur votre 1ʳᵉ commande",
-    detail: "Tous commerces confondus",
-    ends: "2026-10-23T23:59:59+01:00",
-  },
-  {
-    id: "parapharmacie",
-    emoji: "💊",
-    title: "−20 % sur la parapharmacie",
-    detail: "Ce week-end seulement",
-    ends: "2026-10-14T23:59:59+01:00",
-  },
-];
-
 // Le site de jeux Allo..Ala (annoncé sur la page avec le badge « NOUVEAU »)
 export const game = {
   url: "https://alloala.com/jeu/?src=qrcode",

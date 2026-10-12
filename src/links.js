@@ -52,6 +52,15 @@ export const promos = [
   },
 ];
 
+// Le site de jeux Allo..Ala (annoncé sur la page avec le badge « NOUVEAU »)
+export const game = {
+  url: "https://alloala.com/jeu/?src=qrcode",
+  title: "Jouez & gagnez 10 DT",
+  subtitle: "3 jeux · le top 3 gagne chaque semaine",
+  prizes: ["🥇 10 DT", "🥈 1 livraison offerte", "🥉 −50 %"],
+  isNew: true,
+};
+
 // Rejoindre l'équipe : messages WhatsApp déjà écrits
 export const join = [
   {

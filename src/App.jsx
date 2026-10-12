@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { site, phone, whatsapp, links, order, join } from "./links";
+import { site, phone, whatsapp, links, order, join, game } from "./links";
 import { iconMap, Phone, ArrowUpRight, Scooter, WhatsAppLogo, Share } from "./Icons";
 import Scene from "./Scene";
 import OrderSheet from "./OrderSheet";
@@ -365,6 +365,24 @@ export default function App() {
               ))}
             </span>
           </button>
+
+          {/* Le site de jeux : nouveauté annoncée sur la page */}
+          <a className="tile tile-game" href={game.url} data-track="clic-jeu">
+            <span className="game-deco" aria-hidden="true">
+              <i>🎮</i><i>🏆</i><i>🛵</i><i>⭐</i>
+            </span>
+            <span className="game-top">
+              {game.isNew && <span className="game-new">✨ Nouveau</span>}
+              <span className="game-go" aria-hidden="true">Jouer →</span>
+            </span>
+            <span className="game-txt">
+              <span className="t1">{game.title}</span>
+              <span className="t2">{game.subtitle}</span>
+            </span>
+            <span className="game-prizes">
+              {game.prizes.map((p) => <span key={p}>{p}</span>)}
+            </span>
+          </a>
 
           {links.map((item) => (
             <LinkTile key={item.id} item={item} />

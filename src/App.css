@@ -524,16 +524,17 @@ a.tile:active, button.tile:active{ --press: 0.97; }
 /* Ordre d'affichage dans la grille (et ordre d'apparition) */
 .tile-call       { order: 0;  --i: 0; }
 .tile-order      { order: 1;  --i: 1; }
-.tile-whatsapp   { order: 2;  --i: 2; }
-.tile-instagram  { order: 3;  --i: 3; }
-.tile-tiktok     { order: 4;  --i: 4; }
-.tile-facebook   { order: 5;  --i: 5; }
-.tile-site       { order: 6;  --i: 6; }
-.tile-play       { order: 7;  --i: 7; }
-.tile-appstore   { order: 8;  --i: 8; }
-.tile-livreur    { order: 9;  --i: 9; }
-.tile-commercant { order: 10; --i: 10; }
-.tile-share      { order: 11; --i: 11; }
+.tile-game       { order: 2;  --i: 2; }
+.tile-whatsapp   { order: 3;  --i: 3; }
+.tile-instagram  { order: 4;  --i: 4; }
+.tile-tiktok     { order: 5;  --i: 5; }
+.tile-facebook   { order: 6;  --i: 6; }
+.tile-site       { order: 7;  --i: 7; }
+.tile-play       { order: 8;  --i: 8; }
+.tile-appstore   { order: 9;  --i: 9; }
+.tile-livreur    { order: 10; --i: 10; }
+.tile-commercant { order: 11; --i: 11; }
+.tile-share      { order: 12; --i: 12; }
 
 .tile-top{
   display: flex;
@@ -820,6 +821,48 @@ a.tile:active, button.tile:active{ --press: 0.97; }
   0%, 20%, 100%{ transform: none; }
   8%{ transform: translateY(-6px); }
 }
+
+/* --- Le site de jeux (nouveauté) --- */
+.tile-game{
+  grid-column: span 4;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px;
+  border: 1.5px solid rgba(255,211,106,.55);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(255,132,56,.45), transparent 55%),
+    radial-gradient(90% 80% at 0% 100%, rgba(63,140,255,.35), transparent 60%),
+    linear-gradient(150deg, #3A1F7A 0%, #241455 55%, #14244F 100%);
+  box-shadow: 0 20px 38px -18px rgba(122,79,216,.9), 0 0 0 4px rgba(255,211,106,.08);
+}
+/* reflet qui balaie la tuile pour attirer l'œil */
+.tile-game::before{
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(100deg, transparent 35%, rgba(255,255,255,.22) 50%, transparent 65%) -200% 0 / 60% 100% no-repeat;
+  animation: game-shine 4s ease-in-out infinite; animation-delay: calc(var(--intro, 0ms) + 1.2s);
+}
+@keyframes game-shine{ 0%, 55%{ background-position: -200% 0; } 100%{ background-position: 300% 0; } }
+.game-deco{ position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.game-deco i{ position: absolute; font-style: normal; opacity: .22; animation: game-float 5s ease-in-out infinite; }
+.game-deco i:nth-child(1){ right: 18px; top: 46px; font-size: 44px; }
+.game-deco i:nth-child(2){ right: 74px; top: 10px; font-size: 26px; animation-delay: -1.2s; }
+.game-deco i:nth-child(3){ right: 92px; bottom: 34px; font-size: 24px; animation-delay: -2.4s; }
+.game-deco i:nth-child(4){ right: 10px; bottom: 12px; font-size: 18px; animation-delay: -3.6s; }
+@keyframes game-float{ 50%{ transform: translateY(-6px) rotate(-8deg); } }
+.game-top{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.game-new{
+  padding: 5px 10px; border-radius: 99px; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  background: linear-gradient(135deg, #FFD36A, #FF8438); color: #2A1400;
+  box-shadow: 0 0 0 0 rgba(255,211,106,.7); animation: new-pulse 1.8s ease-out infinite;
+}
+@keyframes new-pulse{ to{ box-shadow: 0 0 0 10px rgba(255,211,106,0); } }
+.game-go{ padding: 7px 12px; border-radius: 99px; background: #fff; color: #241455; font-size: 13px; font-weight: 800; transition: transform 160ms ease; }
+@media (hover: hover){ .tile-game:hover .game-go{ transform: translateX(3px); } }
+.game-txt{ display: flex; flex-direction: column; gap: 3px; max-width: 78%; }
+.tile-game .t1{ font-family: "Space Grotesk", sans-serif; font-size: 22px; line-height: 1.1; letter-spacing: -0.01em; }
+.tile-game .t2{ font-size: 13px; opacity: .9; }
+.game-prizes{ display: flex; flex-wrap: wrap; gap: 6px; }
+.game-prizes span{ padding: 5px 9px; border-radius: 10px; background: rgba(255,255,255,.12); font-size: 12px; font-weight: 700; white-space: nowrap; }
 
 /* --- Rejoindre l'équipe --- */
 .tile-join{
@@ -1398,6 +1441,7 @@ footer{
   .road-line, .pin, .track, .flight, .blob, .star, .clouds,
   .wm .ch, .wm .dot, .thanks-scooter, .order-emojis span,
   .promo, .promo-slide, .promo-emoji{ animation: none; }
+  .tile-game::before, .game-deco i, .game-new{ animation: none; }
   .how.is-visible .how-scooter{ animation: none; opacity: 1; left: 50%; }
   .how.is-visible .how-icn{ animation: none; }
   .sheet, .sheet-backdrop{ transition: none; }
